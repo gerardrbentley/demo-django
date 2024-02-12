@@ -1,0 +1,71 @@
+x-deploy:
+  &default-resources
+  resources:
+    limits:
+      cpus: '2'
+      memory: 1G
+    reservations:
+      cpus: '1'
+      memory: 512M
+
+services:
+  database:
+    image: postgres:16.1
+    # Default typically 100 for docker
+    command: ["postgres", "-c", "max_connections=5000"]
+    volumes:
+      - pg_data:/var/lib/postgresql/data/pgdata
+    env_file:
+      - ./.env
+    ports:
+      - "5432:5432"
+
+  pg_exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    environment:
+      - DATA_SOURCE_NAME=postgresql://djan:djanpass@database:5432/djangodb?sslmode=disable
+    deploy: *default-resources
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus.yaml
+    ports:
+      - "9090:9090"
+    deploy: *default-resources
+
+  grafana:
+    image: grafana/grafana:10.3.1
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_LOG_LEVEL=warn
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor traceQLStreaming metricsSummary
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./config/dashboard-setup.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./config/grafana-dashboards:/var/lib/grafana/dashboards
+    deploy: *default-resources
+
+  load_tests:
+    image: grafana/k6:0.48.0
+    env_file:
+      - .env
+    volumes:
+      - ./load_test.js:/tmp/load_test.js
+    command: run --tag "testid=$(date '+%Y%m%d_%H%M%S')" -o experimental-prometheus-rw /tmp/load_test.js
+
+
+volumes:
+  pg_data: null
+  grafana_data: null

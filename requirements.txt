@@ -1,0 +1,4 @@
+uvicorn 
+psycopg
+psycopg-pool
+git+https://github.com/sarahboyce/django.git@33497_postgres_connection_pool
