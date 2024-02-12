@@ -19,6 +19,10 @@ python -m uvicorn server:app --reload
 docker-compose up --build load_tests
 ```
 
+Observe Grafana for postgres connections, P95, etc.:
+
+http://localhost:3000/d/a1b733df-f5fc-46e7-b2cd-6030dcd483b6/webservice?orgId=1&refresh=5s
+
 Run tests with stable/5.0.x branch
 Run tests with patch branch
 
