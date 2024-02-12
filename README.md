@@ -47,3 +47,5 @@ Branch
 http_req_duration..............: avg=412.62ms min=94.88ms med=410.37ms max=834.19ms p(90)=504.37ms p(95)=535.28ms
     - Pool: min 2, max 5
 http_req_duration..............: avg=111.22ms min=68.62ms med=105.86ms max=247.24ms p(90)=138.51ms p(95)=142.86ms
+
+![graphs of results](image.png)
