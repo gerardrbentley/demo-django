@@ -210,7 +210,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "k6_http_req_duration_p95{expected_response=\"true\",view=~\"$views\"} * 1000",
+          "expr": "k6_http_req_duration_p95{expected_response=\"true\"} * 1000",
           "legendFormat": "P95 {{view}}",
           "range": true,
           "refId": "A"
@@ -234,7 +234,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(k6_http_reqs_total{expected_response=\"true\",view=~\"$views\"}[15s])",
+          "expr": "rate(k6_http_reqs_total{expected_response=\"true\"}[$__rate_interval])",
           "hide": false,
           "instant": false,
           "legendFormat": "{{view}} RPS",
@@ -247,7 +247,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(rate(k6_http_reqs_total{expected_response=\"false\", view=~\"$views\"}[15s])) / sum(rate(k6_http_reqs_total{view=~\"$views\"}[15s])) * 100",
+          "expr": "sum(rate(k6_http_reqs_total{expected_response=\"false\"}[$__rate_interval])) / sum(rate(k6_http_reqs_total[$__rate_interval])) * 100",
           "hide": false,
           "instant": false,
           "legendFormat": "Error Pct",

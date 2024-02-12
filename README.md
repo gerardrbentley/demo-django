@@ -10,13 +10,16 @@ python -m venv venv
 python -m pip install -r requirements.txt
 
 # 1. Supporting Services
-docker-compose up --build database pg_exporter prometheus grafana
+docker-compose up --build -d database pg_exporter prometheus grafana
 # 2. Migrate
 python server.py
 # 3. Web Server
 python -m uvicorn server:app --reload
 # 4. Load Test
 docker-compose up --build load_tests
+
+# 5. Tear down resources
+docker-compose down --volumes --remove-orphans
 ```
 
 Observe Grafana for postgres connections, P95, etc.:
